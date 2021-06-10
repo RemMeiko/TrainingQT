@@ -84,7 +84,7 @@ QComboBox#comboBox_user
       <x>1310</x>
       <y>250</y>
       <width>381</width>
-      <height>431</height>
+      <height>481</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -108,7 +108,7 @@ QComboBox#comboBox_user
        <x>40</x>
        <y>140</y>
        <width>301</width>
-       <height>251</height>
+       <height>271</height>
       </rect>
      </property>
      <property name="font">
@@ -130,7 +130,7 @@ QComboBox#comboBox_user
        <property name="geometry">
         <rect>
          <x>40</x>
-         <y>80</y>
+         <y>100</y>
          <width>231</width>
          <height>20</height>
         </rect>
@@ -158,7 +158,7 @@ QComboBox#comboBox_user
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>130</y>
+         <y>160</y>
          <width>241</width>
          <height>31</height>
         </rect>
@@ -197,7 +197,7 @@ QPushButton:hover{
        <property name="geometry">
         <rect>
          <x>40</x>
-         <y>10</y>
+         <y>30</y>
          <width>231</width>
          <height>41</height>
         </rect>
@@ -294,7 +294,7 @@ QComboBox::drop-down
        <property name="geometry">
         <rect>
          <x>40</x>
-         <y>80</y>
+         <y>70</y>
          <width>231</width>
          <height>20</height>
         </rect>
@@ -322,7 +322,7 @@ QComboBox::drop-down
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>130</y>
+         <y>160</y>
          <width>241</width>
          <height>31</height>
         </rect>
@@ -358,7 +358,7 @@ QPushButton:hover{
        <property name="geometry">
         <rect>
          <x>40</x>
-         <y>30</y>
+         <y>20</y>
          <width>231</width>
          <height>20</height>
         </rect>
@@ -379,6 +379,34 @@ QPushButton:hover{
         <string>Username</string>
        </property>
       </widget>
+      <widget class="QLineEdit" name="lineEdit_reg_pwd_Again">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>120</y>
+         <width>231</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>15</pointsize>
+        </font>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="echoMode">
+        <enum>QLineEdit::Password</enum>
+       </property>
+       <property name="placeholderText">
+        <string>Password Again</string>
+       </property>
+      </widget>
      </widget>
     </widget>
     <widget class="QLabel" name="label_pic">
@@ -386,7 +414,7 @@ QPushButton:hover{
       <rect>
        <x>150</x>
        <y>30</y>
-       <width>111</width>
+       <width>91</width>
        <height>91</height>
       </rect>
      </property>
@@ -398,7 +426,7 @@ QPushButton:hover{
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>400</y>
+       <y>450</y>
        <width>381</width>
        <height>31</height>
       </rect>
@@ -437,10 +465,10 @@ QPushButton#pCloseButton:pressed {
      <widget class="QLabel" name="label_highlight">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>5</y>
+        <x>60</x>
+        <y>0</y>
         <width>291</width>
-        <height>21</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="font">
@@ -466,6 +494,30 @@ QPushButton#pCloseButton:pressed {
       </property>
       <property name="text">
        <string>.</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_time">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>10</y>
+        <width>54</width>
+        <height>12</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Consolas</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLabel {
+	color: rgb(255, 0, 0);
+}</string>
+      </property>
+      <property name="text">
+       <string>5s</string>
       </property>
      </widget>
     </widget>

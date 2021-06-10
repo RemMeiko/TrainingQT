@@ -18,6 +18,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // 配置定时器
+    fTimer=new QTimer(this);
+    fTimer->stop();
+    fTimer->setInterval (1000) ;//设置定时周期，单位：毫秒
+    connect(fTimer,SIGNAL(timeout()),this,SLOT(on_timer_timeout()));
+    // 隐藏掉计时部分
+    ui->label_time->hide();
+
     QDesktopWidget* desktop = QApplication::desktop(); // =qApp->desktop();也可以
     move((desktop->width() - this->width())/2, (desktop->height() - this->height())/2);
 
@@ -32,17 +40,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->centralWidget->setGraphicsEffect(shadow_effect);
 
     // 头像绘制
-    QPixmap pixmapa(":/resources/avator.JPG");
-    QPixmap pixmap(80,80);
-    pixmap.fill(Qt::transparent);
-    QPainter painter(&pixmap);
+    QPixmap pixmap(":/resources/avator.JPG");
+    pixmap = pixmap.scaled(ui->label_pic->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    int width = ui->label_pic->size().width();
+    int height = ui->label_pic->size().height();
+    QPixmap image(width,height);
+    image.fill(Qt::transparent);
+    QPainterPath painterPath;
+    painterPath.addEllipse(0, 0, width, height);
+    QPainter painter(&image);
     painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    // painter.setRenderHint(QPainter::Antialiasing, true);
-    QPainterPath path;
-    path.addEllipse(0, 0, 80, 80);
-    painter.setClipPath(path);
-    painter.drawPixmap(0, 0, 80, 80, pixmapa);
-    ui->label_pic->setPixmap(pixmap);
+    painter.setClipPath(painterPath);
+    painter.drawPixmap(0, 0, width, height, pixmap);
+    //绘制到label
+    ui->label_pic->setPixmap(image);
 
     // 确认按钮
     // connect(ui->btn_login_OK,SIGNAL(clicked(bool)),this,SLOT(OnLogin()));
@@ -72,8 +83,7 @@ void MainWindow::OnLogin()
     if(name.isEmpty() or pwd.isEmpty())
     {
         // QMessageBox::warning(this,"警告","用户名或密码不能为空");
-        ui->label_highlight->setText("账号和密码不能为空，请检查是否输入！");
-        ui->MessageWidget->show();
+        prompt("账号和密码不能为空，请检查是否输入！");
         return;
     } else{
         /*
@@ -137,9 +147,7 @@ void MainWindow::requestLoginFinished(QNetworkReply *reply)
             ui->lineEdit_login_passwd->clear();
             // ui->lineEdit_login_username->clear();
             // QMessageBox::critical(this,"提示","用户名或密码错误");
-            ui->MessageWidget->close();
-            ui->label_highlight->setText("不好意思,账号密码输入错误,请重新输入!");
-            ui->MessageWidget->show();
+            prompt("不好意思,账号密码输入错误,请重新输入!");
         }
     }
 }
@@ -152,14 +160,20 @@ void MainWindow::OnRegist()
     // 读取下拉列表数据作为账号
     QString name = ui->lineEdit_reg_username->text();
     QString pwd = ui->lineEdit_reg_passwd->text();
-    if(name.isEmpty() or pwd.isEmpty())
+    QString pwd1 = ui->lineEdit_reg_pwd_Again->text();
+    if(name.isEmpty() or pwd.isEmpty() or pwd1.isEmpty())
     {
-        // QMessageBox::warning(this,"警告","用户名或密码不能为空");
-        ui->MessageWidget->close();
-        ui->label_highlight->setText("账号和密码不能为空，请检查是否输入！");
-        ui->MessageWidget->show();
+        prompt("账号和密码不能为空，请检查是否输入！");
         return;
-    } else {
+    }
+    else if(pwd != pwd1)
+    {
+        prompt("两次密码输入不一致，请重新输入");
+        ui->lineEdit_reg_passwd->clear();
+        ui->lineEdit_reg_pwd_Again->clear();
+    }
+    else
+    {
         QNetworkRequest request;
         QNetworkAccessManager* naManager = new QNetworkAccessManager(this);
         QMetaObject::Connection connRet = QObject::connect(naManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(requestRegistFinished(QNetworkReply*)));
@@ -197,22 +211,13 @@ void MainWindow::requestRegistFinished(QNetworkReply *reply)
         qDebug() << "注册状态码:" << list[1];
         if(list[1] == "1")
         {
-             // qDebug() << "注册成功!";
-            ui->MessageWidget->close();
-            ui->label_highlight->setText("注册成功！");
-            ui->MessageWidget->show();
+            prompt("注册成功！");
         } else if(list[1] == "-1")
         {
-             // qDebug() << "不好意思,你输入的账号名已存在,请换一个!";
-            ui->MessageWidget->close();
-            ui->label_highlight->setText("不好意思,你输入的账号名已存在,请换一个!");
-            ui->MessageWidget->show();
+            prompt("不好意思,你输入的账号名已存在,请换一个!");
         } else
         {
-            // qDebug() << "注册失败!";
-            ui->MessageWidget->close();
-            ui->label_highlight->setText("出问题了！蕾酱会尽快维修的，请稍后再试");
-            ui->MessageWidget->show();
+            prompt("出问题了！蕾酱会尽快维修的，请稍后再试");
         }
     }
 }
@@ -242,14 +247,46 @@ void MainWindow::on_comboBox_currentTextChanged(const QString &arg1)
         default:
             break;
     }
-    QPixmap pixmapa(picData);
-    QPixmap pixmap(80,80);
-    pixmap.fill(Qt::transparent);
-    QPainter painter(&pixmap);
+    //QPixmap pixmapa(picData);
+    QPixmap pixmap(picData);
+
+    pixmap = pixmap.scaled(ui->label_pic->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    int width = ui->label_pic->size().width();
+    int height = ui->label_pic->size().height();
+    QPixmap image(width,height);
+    image.fill(Qt::transparent);
+    QPainterPath painterPath;
+    painterPath.addEllipse(0, 0, width, height);
+    QPainter painter(&image);
     painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    QPainterPath path;
-    path.addEllipse(0, 0, 80, 80);
-    painter.setClipPath(path);
-    painter.drawPixmap(0, 0, 80, 80, pixmapa);
-    ui->label_pic->setPixmap(pixmap);
+    painter.setClipPath(painterPath);
+    painter.drawPixmap(0, 0, width, height, pixmap);
+    //绘制到label
+    ui->label_pic->setPixmap(image);
+
+}
+
+void MainWindow::on_timer_timeout()
+{
+    // QTime curTime=QTime::currentTime(); //获取当前时间
+    ui->label_time->setText(QString::number(time)+="s");
+    ui->label_time->show();
+    time --;
+    if(time == -1)
+    {
+        ui->MessageWidget->close();
+        fTimer->stop () ; //定时器停止
+    }
+
+}
+
+// 登陆和注册弹窗提示信息
+void MainWindow::prompt(QString data)
+{
+    ui->MessageWidget->clearFocus();
+    ui->label_highlight->setText(data);
+    ui->MessageWidget->show();
+    fTimer->start () ;//定时器开始工作
+    time = 5;
+    fTimeCounter.start () ; //计时器开始工作
 }
