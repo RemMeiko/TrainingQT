@@ -1,0 +1,22 @@
+::tab
+{
+	color: rgb(255, 0, 0); /* 红色*/
+	font: 22pt "迷你简粗仿宋";
+	background-color: rgb(0, 170, 255);
+	height:60px;
+	width:150px;
+	background:transparent;
+}
+::tab:hover
+{
+	color: rgb(0, 0, 0);
+	font: 22pt "迷你简粗仿宋";
+	height:60px;
+	width:150px;
+	background-color: rgb(46, 182, 255);
+	border-radius:15px;
+}
+::tab:pressed
+{
+	color: rgb(255, 0, 0);
+}
