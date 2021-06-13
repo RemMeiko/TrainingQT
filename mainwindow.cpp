@@ -9,8 +9,25 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
+#include <QJsonParseError>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFile>
+#include <QHttpPart>
+#include <QDebug>
+#include <QFileDialog>
+#include <QVector>
 // #include "display.h"
-// #include "qmessagewidget.h"
+
+/*
+ * QT实训界面使用
+ * 涉及：QT,mysql,mqtt,webhook,php,API
+ * 界面：登陆界面+功能界面
+ * 登陆界面功能:
+ *    注册：头像,账号,密码，头像使用sm.ms做图床，利用其提供的v2_API接口上传图片
+ * QT涉及：
+ *    定时器，界面设计，NetWork模块，json处理模块
+ * */
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,13 +35,23 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // 配置定时器
+    // 初始化
+    flag_rl = 0;
+
+    QVector<QString> PicUrls;
+    // 配置定时器 倒计时定时器
     fTimer=new QTimer(this);
     fTimer->stop();
     fTimer->setInterval (1000) ;//设置定时周期，单位：毫秒
     connect(fTimer,SIGNAL(timeout()),this,SLOT(on_timer_timeout()));
     // 隐藏掉计时部分
     ui->label_time->hide();
+
+    // 配置定时器 扫描账户框
+    QTimer *AccountTimer = new QTimer(this);
+    AccountTimer->setInterval(4000);
+    AccountTimer->start();
+    connect(AccountTimer,SIGNAL(timeout()),this,SLOT(Account_pic_del_timeout()));
 
     QDesktopWidget* desktop = QApplication::desktop(); // =qApp->desktop();也可以
     move((desktop->width() - this->width())/2, (desktop->height() - this->height())/2);
@@ -40,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->centralWidget->setGraphicsEffect(shadow_effect);
 
     // 头像绘制
+    /*
     QPixmap pixmap(":/resources/avator.JPG");
     pixmap = pixmap.scaled(ui->label_pic->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     int width = ui->label_pic->size().width();
@@ -54,6 +82,8 @@ MainWindow::MainWindow(QWidget *parent) :
     painter.drawPixmap(0, 0, width, height, pixmap);
     //绘制到label
     ui->label_pic->setPixmap(image);
+    */
+    ui->label_pic->hide();
 
     // 确认按钮
     // connect(ui->btn_login_OK,SIGNAL(clicked(bool)),this,SLOT(OnLogin()));
@@ -66,7 +96,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // 处理子窗口信号
     //处理子窗口的信号
-        connect(&form2,&display::Mysignal,this,&MainWindow::dealForm);
+    connect(&form2,&display::Mysignal,this,&MainWindow::dealForm);
+    // 选择上传图片
+    // ui->btn_choose->hide();
 }
 
 MainWindow::~MainWindow()
@@ -161,7 +193,7 @@ void MainWindow::OnRegist()
     QString name = ui->lineEdit_reg_username->text();
     QString pwd = ui->lineEdit_reg_passwd->text();
     QString pwd1 = ui->lineEdit_reg_pwd_Again->text();
-    if(name.isEmpty() or pwd.isEmpty() or pwd1.isEmpty())
+    if(name.isEmpty() or pwd.isEmpty() or pwd1.isEmpty() )
     {
         prompt("账号和密码不能为空，请检查是否输入！");
         return;
@@ -172,6 +204,11 @@ void MainWindow::OnRegist()
         ui->lineEdit_reg_passwd->clear();
         ui->lineEdit_reg_pwd_Again->clear();
     }
+    else if(PicUrls.empty())
+    {
+        prompt("请确保已经选择好头像！");
+        return;
+    }
     else
     {
         QNetworkRequest request;
@@ -179,9 +216,9 @@ void MainWindow::OnRegist()
         QMetaObject::Connection connRet = QObject::connect(naManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(requestRegistFinished(QNetworkReply*)));
         Q_ASSERT(connRet);
         // 将账号和密码作为参数进行url的构造
-        request.setUrl(QUrl("http://47.106.160.176/index.php?model=2"));
-        QString testUrl = QString("&name=%1&passwd=%2").arg(name).arg(pwd);
-
+        request.setUrl(QUrl("http://127.0.0.1/mqtt/Account.php?model=2"));
+        QString testUrl = QString("&username=%1&passwd=%2&avatorUrl=%3&deleteUrl=%4").arg(name).arg(pwd).arg(PicUrls[0]).arg(PicUrls[1]);
+        qDebug() << "url构造参数是：" << testUrl;
         naManager->post(request, testUrl.toUtf8());
         // QNetworkReply* reply = naManager->post(request, testData.toUtf8());
     }
@@ -229,8 +266,11 @@ void MainWindow::dealForm()
     this->show();
 }
 
+// 下拉框数据变化
 void MainWindow::on_comboBox_currentTextChanged(const QString &arg1)
 {
+
+    /*
     QString picData = "";
     //  QMap<QString,int> users{{"remmeiko",1},{"mikasa",2}};
     switch (users[arg1]) {
@@ -247,8 +287,9 @@ void MainWindow::on_comboBox_currentTextChanged(const QString &arg1)
         default:
             break;
     }
-    //QPixmap pixmapa(picData);
+
     QPixmap pixmap(picData);
+    // QPixmap pixmap(AvotorUrl);
 
     pixmap = pixmap.scaled(ui->label_pic->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     int width = ui->label_pic->size().width();
@@ -263,21 +304,141 @@ void MainWindow::on_comboBox_currentTextChanged(const QString &arg1)
     painter.drawPixmap(0, 0, width, height, pixmap);
     //绘制到label
     ui->label_pic->setPixmap(image);
-
+    */
+    QNetworkRequest request;
+    QNetworkAccessManager *networkAccessManager = new QNetworkAccessManager(this);
+    request.setUrl(QUrl(AvotorUrl));
+    connect(networkAccessManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(replyFinished(QNetworkReply *)));
+    networkAccessManager->get(request);
 }
 
+// 响应结束，进行结果处理-图片显示或错误处理
+void MainWindow::replyFinished(QNetworkReply *reply)
+{
+    // 获取响应状态码，200表示正常
+    // QVariant nCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        QByteArray bytes = reply->readAll();
+        QPixmap pixmap;
+        pixmap.loadFromData(bytes);
+        // ui->label->setPixmap(pixmap);
+
+
+        pixmap = pixmap.scaled(ui->label_pic->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        int width = ui->label_pic->size().width();
+        int height = ui->label_pic->size().height();
+        QPixmap image(width,height);
+        image.fill(Qt::transparent);
+        QPainterPath painterPath;
+        painterPath.addEllipse(0, 0, width, height);
+        QPainter painter(&image);
+        painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+        painter.setClipPath(painterPath);
+        painter.drawPixmap(0, 0, width, height, pixmap);
+        //绘制到label
+        ui->label_pic->setPixmap(image);
+        // 缓存到本地
+        QFile file("E:/head.jpg");
+        if (file.open(QIODevice::Append))
+            file.write(bytes);
+        file.close();
+    }
+    else
+    {
+        // 错误处理-显示错误信息，或显示上一次缓存的图片或叉图。
+    }
+}
+
+
+// 倒计时定时器
 void MainWindow::on_timer_timeout()
 {
     // QTime curTime=QTime::currentTime(); //获取当前时间
     ui->label_time->setText(QString::number(time)+="s");
     ui->label_time->show();
     time --;
-    if(time == -1)
+    if(time == 0)
     {
         ui->MessageWidget->close();
         fTimer->stop () ; //定时器停止
     }
+}
 
+// 账户框定时器扫描处理函数
+void MainWindow::Account_pic_del_timeout()
+{
+    if(flag_rl%2 == 1)
+    {
+        QNetworkRequest request;
+        QNetworkAccessManager* naManager = new QNetworkAccessManager(this);
+
+        QMetaObject::Connection connRet = QObject::connect(naManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(dealPic(QNetworkReply*)));
+        Q_ASSERT(connRet);
+        // 将账号和密码作为参数进行url的构造
+        QString username = ui->comboBox->currentText();
+        request.setUrl(QUrl("http://127.0.0.1/mqtt/Account.php?model=3"));
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+        QString testData = QString("&username=%1").arg(username);
+        naManager->post(request, testData.toUtf8());
+        qDebug() << "下拉框数据是：" << ui->comboBox->currentText();
+
+        // qDebug() << "测试url测试数据:" << reply->readAll();
+    }
+
+}
+
+// 处理返回的头像数据
+void MainWindow::dealPic(QNetworkReply* reply)
+{
+    // 获取http状态码
+    QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    if(statusCode.isValid())
+        qDebug() << "status code=" << statusCode.toInt();
+
+    QVariant reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
+    if(reason.isValid())
+        qDebug() << "reason=" << reason.toString();
+
+    QNetworkReply::NetworkError err = reply->error();
+    if(err != QNetworkReply::NoError) {
+        qDebug() << "Failed: " << reply->errorString();
+    } else
+    {
+        // QString data =reply->readAll();
+        // qDebug() << "返回获取的头像数据:" << data;
+
+        //官方文档显示返回的reply是json格式，所以我们采用json格式读取
+        QByteArray allData = reply->readAll();
+        QJsonParseError json_error;
+        QJsonDocument jsonDoc(QJsonDocument::fromJson(allData, &json_error));
+        qDebug() << jsonDoc;
+        if(json_error.error != QJsonParseError::NoError)
+        {
+           qDebug() << "json error!";
+           return;
+        }
+        QJsonObject rootObj = jsonDoc.object();
+        //我们只需要上传后的url，所以值提取了url，如果你需要其他内容，请提取方法类似
+        if(rootObj.contains("data"))
+        {
+           if(rootObj.value("data") == NULL)
+           {
+               return;
+           }else {
+               QJsonValue subObj = rootObj.value("data");
+               QJsonObject subdata = subObj.toArray().at(0).toObject();
+               // 获取头像的访问地址
+               // QString AvotorUrl = subdata["avatorUrl"].toString();
+               AvotorUrl = subdata["avatorUrl"].toString();
+               qDebug() << "头像的访问地址是：" << AvotorUrl;
+               // 获取头像的删除网址
+               QString deleteUrl = subdata["deleteUrl"].toString();
+               qDebug() << "用来删除图像的地址是：" << deleteUrl;
+           }
+        }
+    }
 }
 
 // 登陆和注册弹窗提示信息
@@ -289,4 +450,92 @@ void MainWindow::prompt(QString data)
     fTimer->start () ;//定时器开始工作
     time = 5;
     fTimeCounter.start () ; //计时器开始工作
+}
+
+void MainWindow::on_tabWidget_reg_currentChanged(int index)
+{
+    flag_rl ++;
+    if(flag_rl%2 == 0)
+    {
+        ui->label_pic->hide();
+        ui->btn_choose->show();
+    }
+    else if(flag_rl%2 == 1)
+    {
+        ui->label_pic->show();
+        ui->btn_choose->hide();
+    }
+}
+
+// 选择图片上传
+void MainWindow::on_btn_choose_clicked()
+{
+        //网络载体
+        QNetworkAccessManager *networkAccessManager = new QNetworkAccessManager(this);
+
+        //网络载体的响应接收信号，与响应接收槽绑定
+        connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(uploadDealPic(QNetworkReply *)));
+
+        QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+
+        QHttpPart imagePart;
+        // QString typePic = "image/png";
+        //下面这行代码的作用是打开选择窗口，选择一个图片并返回路径
+        QString strFilePath = QFileDialog::getOpenFileName(this, QString::fromLocal8Bit("选择上传图片"), "./", tr("Image files(*.bmp *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm *.jpeg);;All files (*.*)"));
+        // 确定图片类型  png-->image/png   jpg-->image/jpg  ...以此类推
+        QStringList TypePics = strFilePath.split(".");
+        QString TypePic = QString("image/%1").arg(TypePics[1]);
+        imagePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(TypePic));
+        //如果上传的是jpg图片，就修改为image/jpg
+        imagePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"smfile\"; filename=\"image.png\""));
+        //这里的smfile是参数名，不可以修改，因为SM.MS的API接口要求参数名必须为smfile
+
+        QFile *file = new QFile(strFilePath);
+        if(!file->open(QIODevice::ReadOnly))
+           qDebug()<<"=================================";
+        else{
+           imagePart.setBodyDevice(file);
+           multiPart->append(imagePart);
+        }
+
+        QNetworkRequest request;
+        request.setUrl(QUrl("https://sm.ms/api/v2/upload"));
+        networkAccessManager->post(request,multiPart);
+}
+
+void MainWindow::uploadDealPic(QNetworkReply* reply){
+    int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+        qDebug() << "statusCode:" << statusCode;
+
+        if(reply->error() == QNetworkReply::NoError)
+        {
+            //官方文档显示返回的reply是json格式，所以我们采用json格式读取
+            QByteArray allData = reply->readAll();
+            QJsonParseError json_error;
+            QJsonDocument jsonDoc(QJsonDocument::fromJson(allData, &json_error));
+            qDebug() << jsonDoc;
+            if(json_error.error != QJsonParseError::NoError)
+               {
+                   qDebug() << "json error!";
+                   return;
+               }
+              QJsonObject rootObj = jsonDoc.object();
+              //我们只需要上传后的url，所以值提取了url，如果你需要其他内容，请提取方法类似
+              if(rootObj.contains("data"))
+                {
+                   QJsonObject subObj = rootObj.value("data").toObject();
+                   QString accessUrl = subObj["url"].toString();
+                   qDebug() << "头像的访问地址是：" << accessUrl;
+                   QString deleteUrl = subObj["delete"].toString();
+                   qDebug() << "用来删除图像的地址是：" << deleteUrl;
+                   PicUrls.append(accessUrl);
+                   PicUrls.append(deleteUrl);
+                }
+        }
+        else
+        {
+                qDebug() << "=========";
+        }
+        reply->deleteLater();
 }

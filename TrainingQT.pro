@@ -32,11 +32,12 @@ SOURCES += \
 
 HEADERS += \
     display.h \
-    mainwindow.h
+    mainwindow.h \
+    mqtt/include/QtQmqttDepends \
+    mqtt/qmqtt.h
 
 FORMS += \
         mainwindow.ui \
-    display.ui \
     display.ui
 
 # Default rules for deployment.
@@ -48,3 +49,17 @@ DISTFILES +=
 
 RESOURCES += \
     resources.qrc
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqtt
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqttd
+else:unix: LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqtt
+
+INCLUDEPATH += $$PWD/mqtt/include
+DEPENDPATH += $$PWD/mqtt/include
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqtt
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqttd
+else:unix: LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqtt
+
+INCLUDEPATH += $$PWD/mqtt/include
+DEPENDPATH += $$PWD/mqtt/include

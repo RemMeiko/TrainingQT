@@ -5,7 +5,7 @@
 #include "display.h"
 #include <QNetworkReply>
 #include <map>
-#include <Qtimer>
+#include <QTimer>
 
 namespace Ui {
 class MainWindow;
@@ -21,15 +21,23 @@ public:
 
 // 自定义槽函数
 private slots:
-    void OnLogin(); // 登陆确认槽函数
-    void ShowForm(); //显示子页面槽函数
-    void requestLoginFinished(QNetworkReply* reply); // 登陆确认后网络请求完成后处理槽函数
-    void OnRegist(); // 注册确认槽函数
-    void requestRegistFinished(QNetworkReply* reply); // 注册确认后网络请求完成后处理槽函数
+    void OnLogin(); // 登陆确认
+    void ShowForm(); //显示子页面
+    void requestLoginFinished(QNetworkReply* reply); // 登陆确认后网络请求完成后处理(账号密码验证)
+    void OnRegist(); // 注册确认(注册按钮)
+    void requestRegistFinished(QNetworkReply* reply); // 注册确认后网络请求完成后处理(账号密码注册)
     void dealForm(); // 处理子窗口的函数
 
     void on_comboBox_currentTextChanged(const QString &arg1);
     void on_timer_timeout() ; //定时溢出处理槽函数
+    void Account_pic_del_timeout(); // 扫描账号框定时溢出处理函数
+    void dealPic(QNetworkReply* reply); // 处理返回的头像数据
+
+    void on_tabWidget_reg_currentChanged(int index);
+    void replyFinished(QNetworkReply *reply);// 图片数据库请求显示
+    void uploadDealPic(QNetworkReply *reply);// 图片上传处理
+
+    void on_btn_choose_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -38,10 +46,16 @@ private:
     QTimer *fTimer; //定时器
     QTime fTimeCounter;//计时器
     qint8 time;
+    QString AvotorUrl;
+    QVector<QString> PicUrls; // 上传图片后返回的图片地址和删除图片的地址
+    qint16 flag_rl; // 判断此时是登陆界面还是注册界面
 
 public:
     QMap<QString,int> users{{"remmeiko",1},{"mikasa",2}};
     void prompt(QString data); // 登陆和注册是否成功提示信息
+
 };
+
+
 
 #endif // MAINWINDOW_H

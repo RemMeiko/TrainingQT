@@ -102,13 +102,13 @@ QComboBox#comboBox_user
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="tabWidget_reg">
      <property name="geometry">
       <rect>
        <x>40</x>
        <y>140</y>
        <width>301</width>
-       <height>271</height>
+       <height>281</height>
       </rect>
      </property>
      <property name="font">
@@ -122,170 +122,6 @@ QComboBox#comboBox_user
      <property name="currentIndex">
       <number>1</number>
      </property>
-     <widget class="QWidget" name="tab_sign">
-      <attribute name="title">
-       <string>登录</string>
-      </attribute>
-      <widget class="QLineEdit" name="lineEdit_login_passwd">
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>100</y>
-         <width>231</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Consolas</family>
-         <pointsize>15</pointsize>
-        </font>
-       </property>
-       <property name="inputMask">
-        <string/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
-       </property>
-       <property name="placeholderText">
-        <string>Password</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btn_login_OK">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>160</y>
-         <width>241</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Consolas</family>
-         <pointsize>15</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton
-{
-	border-radius:15px;
-	color: rgb(255, 255, 255);
-	background-color: rgb(245, 76, 83);
-}
-QPushButton:hover{
-	border-radius:15px;
-	background-color: rgb(16, 204, 255);
-}</string>
-       </property>
-       <property name="text">
-        <string>  确认</string>
-       </property>
-      </widget>
-      <widget class="QComboBox" name="comboBox">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>30</y>
-         <width>231</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Consolas</family>
-         <pointsize>12</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-         <stylestrategy>PreferAntialias</stylestrategy>
-        </font>
-       </property>
-       <property name="cursor">
-        <cursorShape>ArrowCursor</cursorShape>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">/*下拉列表框*/
-QComboBox
-{
-    background:transparent;
-    padding-left:5px ;
-    border-top-left-radius:3px;
-    border-top-right-radius:3px;
-    border: 1px solid rgb(209 , 209 , 209);
-}
-QComboBox:hover
-{
-    border: 1px solid rgb(21 , 131 , 221);
-}
-QComboBox QAbstractItemView::item
-{
-    height:40px;
-}
-QComboBox::down-arrow
-{
-	
-	
-    border-image: url(:/resources/down.png) 0 34 0 0 ;
-}
-QComboBox::down-arrow:hover
-{
-    border-image: url(:/resources/down.png) 0 17 0 17 ;
-}
-QComboBox::down-arrow:on
-{
-    border-image: url(:/resources/down.png) 0 0 0 34 ;
-}
-QComboBox::drop-down
-{
-    width:20px;
-    background:transparent; /*不加此句下拉箭头背景色为灰色与整体样式不一致，也可设置 border:0px; border-radius:0px; background:white; border-left:0px ; 即设置为无边框*/
-    padding-right:5px;
-}
-</string>
-       </property>
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-       <property name="currentText">
-        <string notr="true">remmeiko</string>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>35</width>
-         <height>35</height>
-        </size>
-       </property>
-       <item>
-        <property name="text">
-         <string>remmeiko</string>
-        </property>
-        <property name="icon">
-         <iconset resource="resources.qrc">
-          <normaloff>:/resources/avator.JPG</normaloff>:/resources/avator.JPG</iconset>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>mikasa</string>
-        </property>
-        <property name="icon">
-         <iconset resource="resources.qrc">
-          <normaloff>:/resources/mikasa.jpg</normaloff>:/resources/mikasa.jpg</iconset>
-        </property>
-       </item>
-      </widget>
-     </widget>
      <widget class="QWidget" name="tab_reg">
       <attribute name="title">
        <string>注册</string>
@@ -408,6 +244,162 @@ QPushButton:hover{
        </property>
       </widget>
      </widget>
+     <widget class="QWidget" name="tab_sign">
+      <attribute name="title">
+       <string>登录</string>
+      </attribute>
+      <widget class="QLineEdit" name="lineEdit_login_passwd">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>100</y>
+         <width>231</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>15</pointsize>
+        </font>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="echoMode">
+        <enum>QLineEdit::Password</enum>
+       </property>
+       <property name="placeholderText">
+        <string>Password</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_login_OK">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>150</y>
+         <width>241</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>15</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton
+{
+	border-radius:15px;
+	color: rgb(255, 255, 255);
+	background-color: rgb(245, 76, 83);
+}
+QPushButton:hover{
+	border-radius:15px;
+	background-color: rgb(16, 204, 255);
+}</string>
+       </property>
+       <property name="text">
+        <string>  确认</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="comboBox">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>30</y>
+         <width>231</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>12</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+         <stylestrategy>PreferAntialias</stylestrategy>
+        </font>
+       </property>
+       <property name="cursor">
+        <cursorShape>ArrowCursor</cursorShape>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">/*下拉列表框*/
+QComboBox
+{
+    background:transparent;
+    padding-left:5px ;
+    border-top-left-radius:3px;
+    border-top-right-radius:3px;
+    border: 1px solid rgb(209 , 209 , 209);
+}
+QComboBox:hover
+{
+    border: 1px solid rgb(21 , 131 , 221);
+}
+QComboBox QAbstractItemView::item
+{
+    height:40px;
+}
+QComboBox::down-arrow
+{
+	
+	
+    border-image: url(:/resources/down.png) 0 34 0 0 ;
+}
+QComboBox::down-arrow:hover
+{
+    border-image: url(:/resources/down.png) 0 17 0 17 ;
+}
+QComboBox::down-arrow:on
+{
+    border-image: url(:/resources/down.png) 0 0 0 34 ;
+}
+QComboBox::drop-down
+{
+    width:20px;
+    background:transparent; /*不加此句下拉箭头背景色为灰色与整体样式不一致，也可设置 border:0px; border-radius:0px; background:white; border-left:0px ; 即设置为无边框*/
+    padding-right:5px;
+}
+</string>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="currentText">
+        <string notr="true">remmeiko</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <item>
+        <property name="text">
+         <string>remmeiko</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>mikasa</string>
+        </property>
+       </item>
+      </widget>
+     </widget>
     </widget>
     <widget class="QLabel" name="label_pic">
      <property name="geometry">
@@ -418,8 +410,16 @@ QPushButton:hover{
        <height>91</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>Consolas</family>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>  头像</string>
+      <string>  蕾酱加载中...</string>
      </property>
     </widget>
     <widget class="QWidget" name="MessageWidget" native="true">
@@ -521,12 +521,43 @@ QPushButton#pCloseButton:pressed {
       </property>
      </widget>
     </widget>
+    <widget class="QPushButton" name="btn_choose">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>30</y>
+       <width>100</width>
+       <height>100</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Consolas</family>
+       <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+
+{
+	border-radius:50px;
+	
+	background-color: rgb(255, 255, 255);
+	
+	
+}
+</string>
+     </property>
+     <property name="text">
+      <string> 选择图片</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
