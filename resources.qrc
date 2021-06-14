@@ -8,6 +8,11 @@
         <file>resources/mikasa.jpg</file>
         <file>resources/avator.webp</file>
         <file>resources/avator.JPG</file>
+        <file>resources/3.jpg</file>
+        <file>resources/4.png</file>
+        <file>resources/5.png</file>
+        <file>resources/5_1.png</file>
+        <file>resources/5_2.png</file>
     </qresource>
     <qresource prefix="/qss" lang="css"/>
     <qresource prefix="/qss"/>

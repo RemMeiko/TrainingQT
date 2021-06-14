@@ -31,13 +31,20 @@ private slots:
     void on_comboBox_currentTextChanged(const QString &arg1);
     void on_timer_timeout() ; //定时溢出处理槽函数
     void Account_pic_del_timeout(); // 扫描账号框定时溢出处理函数
-    void dealPic(QNetworkReply* reply); // 处理返回的头像数据
+    // void dealPic(QNetworkReply* reply); // 处理返回的头像数据
 
     void on_tabWidget_reg_currentChanged(int index);
     void replyFinished(QNetworkReply *reply);// 图片数据库请求显示
     void uploadDealPic(QNetworkReply *reply);// 图片上传处理
 
     void on_btn_choose_clicked();
+
+    // 处理请求的网络图片进行本地缓存
+    void dealPicCache(QNetworkReply* reply);
+    // 绘制头像
+    void requestPicFinish(QNetworkReply *reply);
+    void AvatarDrawing(qint16 choose,QString Address);
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -53,6 +60,20 @@ private:
 public:
     QMap<QString,int> users{{"remmeiko",1},{"mikasa",2}};
     void prompt(QString data); // 登陆和注册是否成功提示信息
+    void Write(QString username,QString passwd); // 本地文件写入函数
+    void readAccount(); // 本地文件读出函数
+
+
+    // 头像压缩
+    QString togray(int sx,QString fileName);
+    // 压缩倍数确定
+    int getSuoXiao(int sx,int w);
+    // 图片本地缓存加载
+    void PicCache();
+
+    QString PicName;
+    QString PicType;
+    QMap<QString,QString> accountRem;
 
 };
 
