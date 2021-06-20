@@ -18,9 +18,9 @@
     * 对数据库中温湿度进行数据可视化(柱形图和折线图分析)
     * 显示最近的温湿度和烟雾传感器数据
 
-![登陆](https://mikasae.github.io/Mikasa/other/QT_login.gif)
+[登陆演示动画](https://mikasae.github.io/Mikasa/other/QT_login.gif)
 
-![注册](https://mikasae.github.io/Mikasa/other/QT_reg.gif)
+[注册演示动画](https://mikasae.github.io/Mikasa/other/QT_reg.gif)
 
 * 功能界面
 
