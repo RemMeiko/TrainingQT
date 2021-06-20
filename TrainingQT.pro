@@ -6,6 +6,9 @@
 
 QT       += core gui
 QT += network
+QT       += core gui sql
+CONFIG += resources_big
+QT += printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -26,19 +29,33 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    furniture.cpp \
+    imageswitch.cpp \
     main.cpp \
-    display.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    verificationcodelabel.cpp \
+    widget.cpp \
+    qcustomplot.cpp \
+    table.cpp
 
 HEADERS += \
-    display.h \
+    # mqtt/include/QtQmqttDepends \
+    furniture.h \
+    imageswitch.h \
     mainwindow.h \
-    mqtt/include/QtQmqttDepends \
-    mqtt/qmqtt.h
+    verificationcodelabel.h \
+    widget.h \
+    qcustomplot.h \
+    table.h
 
 FORMS += \
         mainwindow.ui \
-    display.ui
+    furniture.ui \
+    widget.ui \
+    furniture.ui \
+    mainwindow.ui \
+    widget.ui \
+    table.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -47,19 +64,20 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES +=
 
+
+# win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqtt
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqttd
+#else:unix: LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqtt
+
+#INCLUDEPATH += $$PWD/mqtt/include
+#DEPENDPATH += $$PWD/mqtt/include
+
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqtt
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqttd
+#else:unix: LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqtt
+
+# INCLUDEPATH += $$PWD/mqtt/include
+# DEPENDPATH += $$PWD/mqtt/include
+
 RESOURCES += \
     resources.qrc
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqtt
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqttd
-else:unix: LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqtt
-
-INCLUDEPATH += $$PWD/mqtt/include
-DEPENDPATH += $$PWD/mqtt/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqtt
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqttd
-else:unix: LIBS += -L$$PWD/mqtt/lib/ -lQt5Qmqtt
-
-INCLUDEPATH += $$PWD/mqtt/include
-DEPENDPATH += $$PWD/mqtt/include

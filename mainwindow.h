@@ -2,10 +2,30 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "display.h"
 #include <QNetworkReply>
-#include <map>
 #include <QTimer>
+#include <QGraphicsDropShadowEffect>
+#include <QPainter>
+#include <QTabBar>
+#include <QDesktopWidget>
+#include <QMessageBox>
+#include <QDebug>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
+#include <QJsonParseError>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFile>
+#include <QHttpPart>
+#include <QDebug>
+#include <QFileDialog>
+#include <QVector>
+#include <QElapsedTimer>
+#include <QPropertyAnimation>
+#include <QMovie>
+#include <QDir>
+#include "furniture.h"
 
 namespace Ui {
 class MainWindow;
@@ -46,16 +66,24 @@ private slots:
     void AvatarDrawing(qint16 choose,QString Address);
     void on_pushButton_clicked();
 
+    void on_label_Veri_clicked();
+    // 文件是否存在检查
+    bool isDirExist(QString fullPath);
+
 private:
     Ui::MainWindow *ui;
     //声明新窗口
-    display form2;
+    // display form2;
+    // 功能窗口
+    // Features features;
+    Furniture furniture;
     QTimer *fTimer; //定时器
     QTime fTimeCounter;//计时器
     qint8 time;
     QString AvotorUrl;
     QVector<QString> PicUrls; // 上传图片后返回的图片地址和删除图片的地址
     qint16 flag_rl; // 判断此时是登陆界面还是注册界面
+     bool flag_reg;
 
 public:
     QMap<QString,int> users{{"remmeiko",1},{"mikasa",2}};
@@ -74,6 +102,10 @@ public:
     QString PicName;
     QString PicType;
     QMap<QString,QString> accountRem;
+    // 事件过滤器
+//    bool eventFilter(QObject *watched, QEvent *event);
+    void dealLoad();
+
 
 };
 

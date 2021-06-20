@@ -1,27 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QGraphicsDropShadowEffect>
-#include <QPainter>
-#include <QTabBar>
-#include <QDesktopWidget>
-#include <QMessageBox>
-#include <QDebug>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QNetworkAccessManager>
-#include <QJsonParseError>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QFile>
-#include <QHttpPart>
-#include <QDebug>
-#include <QFileDialog>
-#include <QVector>
-#include <QElapsedTimer>
-// #include "display.h"
 
-/*
- * QT实训界面使用
+
+/* QT实训界面使用
  * 涉及：QT,mysql,mqtt,webhook,php,API
  * 界面：登陆界面+功能界面
  * 登陆界面功能:
@@ -35,12 +16,27 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    // 本地缓存初始化
     PicCache();
 
+    ui->pushButton->hide();
+    // 加载相关信息
+    this->setWindowTitle("Login & Register");
+    this->setWindowIcon(QIcon(":/resources/ico.png"));
+    /*加载登录界面的gif*/
+//    QMovie *movie = new QMovie(":/resources/loading.gif");
+//    ui->label_GIF->setMovie(movie);
+//   //  movie->start();
+
+    // ui->pushButton->hide();
     // 初始化
     flag_rl = 0;
+    // 判断账号框切换，上一次是否为本地账号
+    flag_reg = true;
     // 初始化combobox
     readAccount();
+    ui->tab_sign->lower();
+    ui->label_Veri->raise();
 
     QVector<QString> PicUrls;
     // 配置定时器 倒计时定时器
@@ -55,7 +51,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QTimer *AccountTimer = new QTimer(this);
     AccountTimer->setInterval(3000);
     AccountTimer->start();
-    // AccountTimer->stop();
     // AccountTimer->stop();
     connect(AccountTimer,SIGNAL(timeout()),this,SLOT(Account_pic_del_timeout()));
 
@@ -84,9 +79,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // 处理子窗口信号
     //处理子窗口的信号
-    connect(&form2,&display::Mysignal,this,&MainWindow::dealForm);
+    // connect(&form2,&display::Mysignal,this,&MainWindow::dealForm);
+    connect(&furniture,&Furniture::Mysignal,this,&MainWindow::dealForm);
+
     // 选择上传图片
     // ui->btn_choose->hide();
+    // ui->label_Veri->installEventFilter(this);
+
+    /*窗口出现动画效果*/
+    QPropertyAnimation *animation1 = new QPropertyAnimation(this, "windowOpacity");
+    animation1->setDuration(1000);
+    animation1->setStartValue(0);
+    animation1->setEndValue(1);
+    animation1->start();
 }
 
 // 在label-pic中绘制头像
@@ -118,8 +123,8 @@ void MainWindow::AvatarDrawing(qint16 choose,QString Address)
         painter.drawPixmap(0, 0, width, height, pixmap);
         //绘制到label
         ui->label_pic->setPixmap(image);
+        qDebug() << "正在以第二种方式绘制头像";
     }
-
 }
 
 // 网络请求绘制头像
@@ -149,7 +154,7 @@ void MainWindow::requestPicFinish(QNetworkReply *reply)
        //绘制到label
        ui->label_pic->setPixmap(image);
        // 缓存到本地
-       QFile file("E:/head.jpg");
+       QFile file("D:/head.jpg");
        if (file.open(QIODevice::Append))
            file.write(bytes);
        file.close();
@@ -176,24 +181,31 @@ void MainWindow::OnLogin()
         // QMessageBox::warning(this,"警告","用户名或密码不能为空");
         prompt("账号和密码不能为空，请检查是否输入！");
         return;
-    } else{
+    } else if(ui->label_Veri->getVerificationCode() != ui->lineEdit_VeriCode->text())
+    {
+        prompt("验证码输入错误!");
+        ui->label_Veri->slt_reflushVerification();
+        ui->label_Veri->flag = true;
+        return;
+    }else{
         /*
          * 使用QT C++网络请求，借助NetWork模块
-         * 1.构造QNetworkAccessManager对象(提供有发送QNetworkRequest网络请求和接收QNetworkReply网络回复、缓存和Cookie管理、代理设置等功能)
-         * 2.构造QNetworkRequest对象(提供了对本次网络请求的封装,QNetworkRequest提供了很多方法来对请求进行配置，比如我们可以使用QNetworkRequest::setHeader设置请求头等)
-         * 3.异步请求，请求完成后会调用void requestFinished(QNetworkReply* reply)槽函数，所以需要进行槽函数的定义和构造
+         * 1.构造QNetworkAccessManager对象(提供有发送QNetworkRequest网络请求和接收
+         * QNetworkReply网络回复、缓存和Cookie管理、代理设置等功能)
+         * 2.构造QNetworkRequest对象(提供了对本次网络请求的封装,QNetworkRequest
+         * 提供了很多方法来对请求进行配置，比如我们可以使用QNetworkRequest::setHeader设置请求头等)
+         * 3.异步请求，请求完成后会调用void requestFinished(QNetworkReply* reply)槽函数，
+         * 所以需要进行槽函数的定义和构造
          * */
         QNetworkRequest request;
         QNetworkAccessManager* naManager = new QNetworkAccessManager(this);
-
-        QMetaObject::Connection connRet = QObject::connect(naManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(requestLoginFinished(QNetworkReply*)));
+        QMetaObject::Connection connRet = QObject::connect(naManager,
+           SIGNAL(finished(QNetworkReply*)), this, SLOT(requestLoginFinished(QNetworkReply*)));
         Q_ASSERT(connRet);
-
         // 将账号和密码作为参数进行url的构造
-        request.setUrl(QUrl("http://127.0.0.1/mqtt/Account.php?model=1"));
+        request.setUrl(QUrl("https://web.remmeiko.top/API/QT.php?model=1"));
         QString testData = QString("&username=%1&passwd=%2").arg(name).arg(pwd);
         naManager->post(request, testData.toUtf8());
-        // qDebug() << "测试url测试数据:" << reply->readAll();
         // 是否记住密码进行处理
         if(ui->checkBox->isChecked())
         {
@@ -203,13 +215,14 @@ void MainWindow::OnLogin()
                 qDebug() << "正在写入账户和数据 ";
             }
         }
+
     }
 }
 
 // 将账户和密码写入users.ini本地文件进行封装
 void MainWindow::Write(QString username,QString passwd)
 {
-    QFile  fileName("F:/CodeWorkspace/01QT/08DevTrainingQT/users.ini");
+    QFile  fileName("D:/users.ini");
     if(!fileName.open(QIODevice::ReadWrite  | QIODevice::Text))
     {
         qDebug() << "Open failed." << endl;
@@ -238,7 +251,7 @@ void MainWindow::Write(QString username,QString passwd)
 // 从user.ini中读取账户和用户名字
 void MainWindow::readAccount()
 {
-    QFile fileName("F:/CodeWorkspace/01QT/08DevTrainingQT/users.ini");
+    QFile fileName("D:/users.ini");
     if(!fileName.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qDebug() << "Open failed." << endl;
@@ -271,8 +284,10 @@ void MainWindow::readAccount()
 
 void MainWindow::ShowForm()
 {
-    form2.show();
+    // form2.show();
+    furniture.show();
     this->close();
+    furniture.showBea();
 }
 
 /*
@@ -309,6 +324,11 @@ void MainWindow::requestLoginFinished(QNetworkReply *reply)
             // 账户或密码输入错误清空文本框并进行提示
             ui->lineEdit_login_passwd->clear();
             prompt("不好意思,账号密码输入错误,请重新输入!");
+        } else if(list[3] == "3")
+        {
+            // 账户或密码输入错误清空文本框并进行提示
+            ui->lineEdit_login_passwd->clear();
+            prompt("不好意思,该账号未注册");
         }
     }
 }
@@ -318,6 +338,8 @@ void MainWindow::OnRegist()
 {
     // 获取登陆框的账号和密码 同时判断是否为空
     // QString name = ui->lineEdit_reg_username->text();
+    // 请求url的参数构造数据
+    QString testUrl;
     // 读取下拉列表数据作为账号
     QString name = ui->lineEdit_reg_username->text();
     QString pwd = ui->lineEdit_reg_passwd->text();
@@ -333,11 +355,6 @@ void MainWindow::OnRegist()
         ui->lineEdit_reg_passwd->clear();
         ui->lineEdit_reg_pwd_Again->clear();
     }
-    else if(PicUrls.empty())
-    {
-        prompt("请确保已经选择好头像！");
-        return;
-    }
     else
     {
         QNetworkRequest request;
@@ -345,8 +362,15 @@ void MainWindow::OnRegist()
         QMetaObject::Connection connRet = QObject::connect(naManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(requestRegistFinished(QNetworkReply*)));
         Q_ASSERT(connRet);
         // 将账号和密码作为参数进行url的构造
-        request.setUrl(QUrl("http://127.0.0.1/mqtt/Account.php?model=2"));
-        QString testUrl = QString("&username=%1&passwd=%2&avatorUrl=%3&deleteUrl=%4").arg(name).arg(pwd).arg(PicUrls[0]).arg(PicUrls[1]);
+        request.setUrl(QUrl("https://web.remmeiko.top/API/QT.php?model=2"));
+//        if(PicUrls.empty())
+//        {
+//            // 若未选择头像则采用默认头像
+//            prompt("已采用默认头像,可自行修改!");
+//            testUrl = QString("&username=%1&passwd=%2&avatorUrl=%3&deleteUrl=%4").arg(name).arg(pwd).arg(":/resources/ico.png").arg(NULL);
+//        } else {
+            testUrl = QString("&username=%1&passwd=%2&avatorUrl=%3&deleteUrl=%4").arg(name).arg(pwd).arg(PicUrls[0]).arg(PicUrls[1]);
+//        }
         qDebug() << "url构造参数是：" << testUrl;
         naManager->post(request, testUrl.toUtf8());
         // QNetworkReply* reply = naManager->post(request, testData.toUtf8());
@@ -378,6 +402,9 @@ void MainWindow::requestRegistFinished(QNetworkReply *reply)
         if(list[1] == "1")
         {
             prompt("注册成功！");
+            // 跳转登陆界面保留账号
+            ui->tabWidget_reg->setCurrentIndex(1);
+            ui->comboBox->setEditText(ui->lineEdit_reg_username->text());
         } else if(list[1] == "-1")
         {
             prompt("不好意思,你输入的账号名已存在,请换一个!");
@@ -391,8 +418,14 @@ void MainWindow::requestRegistFinished(QNetworkReply *reply)
 // 处理子窗口信号的函数
 void MainWindow::dealForm()
 {
-    form2.close();
+    furniture.close();
+    // form2.close();
     this->show();
+    QPropertyAnimation *animation1 = new QPropertyAnimation(this, "windowOpacity");
+    animation1->setDuration(1000);
+    animation1->setStartValue(0);
+    animation1->setEndValue(1);
+    animation1->start();
 }
 
 // 下拉框数据变化
@@ -416,28 +449,58 @@ void MainWindow::on_timer_timeout()
     }
 }
 
-// 账户框定时器扫描处理函数
-void MainWindow::Account_pic_del_timeout()
+// 加载方法解决  存在问题：定时器扫描存在主线程停滞从而造成卡顿现象
+void MainWindow::dealLoad()
 {
+    bool flag_match = false;
+    //
     QString fileAddress = "";
     if(flag_rl%2 == 1)
     {
-        // 匹配输入的数据和下拉框中存储的数据是否一致
         for(int i = 0;i < ui->comboBox->count();i++)
         {
+             // 匹配输入的数据和下拉框中存储的数据是否一致
             if(ui->comboBox->currentText() == ui->comboBox->itemText(i))
             {
                 fileAddress = QString("D:/%1.jpg").arg(ui->comboBox->currentText());
+                if(!isDirExist(fileAddress))
+                {
+                    fileAddress = QString("D:/%1.png").arg(ui->comboBox->currentText());
+                }
                 qDebug() <<"此时键值对中的键是:" <<  accountRem.value(ui->comboBox->currentText());
                 // 密码填充
+                qDebug() << "此时应该填充的密码是：" << accountRem.value(ui->comboBox->currentText());
                 ui->lineEdit_login_passwd->setText(accountRem.value(ui->comboBox->currentText()));
-            } else
+                qDebug() << "绘制图像的路径是:" << fileAddress;
+                // 勾选记住密码
+                AvatarDrawing(2,fileAddress);
+                flag_match = true;
+                // 为本地账号则置为true
+                flag_reg = true;
+                break;
+            }
+        }if(!flag_match)
+        {
+            AvatarDrawing(2,":/resources/ico.png");
+            // ui->lineEdit_login_passwd->clear();
+            if(flag_reg)
             {
                 ui->lineEdit_login_passwd->clear();
+                flag_reg = false;
             }
-            AvatarDrawing(2,fileAddress);
         }
     }
+}
+// 账户框定时器扫描处理函数
+void MainWindow::Account_pic_del_timeout()
+{
+//    QTimer runTimer;
+//    auto runFunc = [&](){
+//        runTimer.start();
+//        auto dealLoad();
+//        return;
+//    };
+    dealLoad();
 }
 
 // 登陆和注册弹窗提示信息
@@ -569,8 +632,28 @@ void MainWindow::PicCache()
     {
         dataAccount.append(ui->comboBox->itemText(i));
     }
+    // 图片类型
+    QStringList listtype = {".jpg",".png",".bmp"};
     for(int i = 0; i < dataAccount.length();i++)
     {
+        bool flagExist = false;
+        for(int j = 0;j < listtype.count();j++)
+        {
+            QString filePic = QString("D:/%1%2").arg(dataAccount[i]).arg(listtype[j]);
+            qDebug() << "此时的文件路径是：" << filePic;
+            flagExist = isDirExist(filePic);
+            if(flagExist)
+                qDebug() << filePic << "图片已经存在！";
+                break;
+        }
+        qDebug() << "这次的数据是" << flagExist;
+        if(flagExist)
+        {
+            if(i < dataAccount.count()-1)
+                continue;
+            else
+                break;
+        }
         //qDebug() << "列表数据" << i << "是:" << dataAccount[i];
         // 以列表中数据位参数循环请求
         QNetworkRequest request;
@@ -579,7 +662,7 @@ void MainWindow::PicCache()
         QMetaObject::Connection connRet = QObject::connect(naManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(dealPicCache(QNetworkReply*)));
         Q_ASSERT(connRet);
         // 将账号作为参数进行url的构造
-        request.setUrl(QUrl("http://127.0.0.1/mqtt/Account.php?model=3"));
+        request.setUrl(QUrl("https://web.remmeiko.top/API/QT.php?model=3"));
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
         QString testData = QString("&username=%1").arg(dataAccount[i]);
         naManager->post(request, testData.toUtf8());
@@ -589,7 +672,7 @@ void MainWindow::PicCache()
         // 线程延时
         QElapsedTimer t;
         t.start();
-        while(t.elapsed()<5000)
+        while(t.elapsed()<10000)
             QCoreApplication::processEvents();
     }
 }
@@ -760,7 +843,41 @@ int MainWindow::getSuoXiao(int sx,int w){
    return suoxiao;
 }
 
+
+
+// 点击验证码进行切换
+void MainWindow::on_label_Veri_clicked()
+{
+   ui->label_Veri->flag = true;
+   ui->label_Veri->slt_reflushVerification();
+}
+
+//// 事件过滤器
+//bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+//{
+//    if(watched == ui->label_Veri)
+//    {
+//        if(event->type() == QEvent::Paint)
+//        {
+//            ui->label_Veri->slt_reflushVerification();
+//        }
+//    }
+//}
+
+// 本地文件数据检查
+bool MainWindow::isDirExist(QString fullPath)
+{
+    QFileInfo file(fullPath);
+    if(file.isFile())
+    {
+        return true;
+    }
+    return false;
+}
+
+// 跳转
 void MainWindow::on_pushButton_clicked()
 {
-    PicCache();
+    furniture.show();
+    this->close();
 }

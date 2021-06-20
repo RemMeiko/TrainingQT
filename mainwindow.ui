@@ -30,15 +30,7 @@
 	width:150px;
 	background:transparent;
 }
-::tab:hover
-{
-	color: rgb(0, 0, 0);
-	font: 22pt &quot;迷你简粗仿宋&quot;;
-	height:60px;
-	width:150px;
-	background-color: rgb(46, 182, 255);
-	border-radius:15px;
-}
+
 ::tab:pressed
 {
 	color: rgb(255, 0, 0);
@@ -54,8 +46,7 @@ QFrame#frame
 	border-radius:15px;
 	border:1px solid rgb(100, 169,139);
 }
-
-QLineEdit
+QLineEdit#lineEdit_reg_passwd,QLineEdit#lineEdit_reg_pwd_Again,QLineEdit#lineEdit_reg_username,QLineEdit#lineEdit_login_passwd
 {
 	background: transparent;
 	border:none;
@@ -64,7 +55,6 @@ QLineEdit
 }
 QLabel#label_pic
 {
-	
 	color: rgb(0, 255, 255);
 }
 QComboBox#comboBox_user
@@ -118,6 +108,17 @@ QComboBox#comboBox_user
      </property>
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">::tab:hover
+{
+	color: rgb(0, 0, 0);
+	font: 22pt &quot;迷你简粗仿宋&quot;;
+	height:60px;
+	width:150px;
+	background-color: rgb(46, 182, 255);
+	border-radius:15px;
+}</string>
      </property>
      <property name="currentIndex">
       <number>0</number>
@@ -252,7 +253,7 @@ QPushButton:hover{
        <property name="geometry">
         <rect>
          <x>40</x>
-         <y>100</y>
+         <y>70</y>
          <width>231</width>
          <height>20</height>
         </rect>
@@ -261,6 +262,8 @@ QPushButton:hover{
         <font>
          <family>Consolas</family>
          <pointsize>15</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
         </font>
        </property>
        <property name="inputMask">
@@ -280,7 +283,7 @@ QPushButton:hover{
        <property name="geometry">
         <rect>
          <x>40</x>
-         <y>170</y>
+         <y>180</y>
          <width>241</width>
          <height>31</height>
         </rect>
@@ -311,6 +314,9 @@ QPushButton:hover{
        <property name="text">
         <string>  确认</string>
        </property>
+       <property name="shortcut">
+        <string>Return</string>
+       </property>
       </widget>
       <widget class="QComboBox" name="comboBox">
        <property name="enabled">
@@ -319,7 +325,7 @@ QPushButton:hover{
        <property name="geometry">
         <rect>
          <x>40</x>
-         <y>30</y>
+         <y>10</y>
          <width>231</width>
          <height>41</height>
         </rect>
@@ -350,6 +356,7 @@ QComboBox:hover
 {
     border: 1px solid rgb(21 , 131 , 221);
 }
+
 QComboBox QAbstractItemView::item
 {
     height:40px;
@@ -360,6 +367,7 @@ QComboBox::down-arrow
 	
     border-image: url(:/resources/down.png) 0 34 0 0 ;
 }
+/*
 QComboBox::down-arrow:hover
 {
     border-image: url(:/resources/down.png) 0 17 0 17 ;
@@ -368,6 +376,7 @@ QComboBox::down-arrow:on
 {
     border-image: url(:/resources/down.png) 0 0 0 34 ;
 }
+*/
 QComboBox::drop-down
 {
     width:20px;
@@ -393,13 +402,67 @@ QComboBox::drop-down
        <property name="geometry">
         <rect>
          <x>40</x>
-         <y>140</y>
+         <y>150</y>
          <width>81</width>
          <height>16</height>
         </rect>
        </property>
        <property name="text">
         <string>记住密码</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit_VeriCode">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>110</y>
+         <width>231</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>15</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLineEdit
+{
+	background-color: transparent;
+	color:#717072;
+	border:none;
+	border-bottom:1px solid #717072;
+	
+	
+}</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="echoMode">
+        <enum>QLineEdit::Normal</enum>
+       </property>
+       <property name="placeholderText">
+        <string>验证码:大写</string>
+       </property>
+      </widget>
+      <widget class="VerificationCodeLabel" name="label_Veri">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>105</y>
+         <width>71</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>验证码</string>
        </property>
       </widget>
      </widget>
@@ -561,9 +624,47 @@ QPushButton:hover{
      </property>
     </widget>
    </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>940</x>
+      <y>210</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>VerificationCodeLabel</class>
+   <extends>QLabel</extends>
+   <header>verificationcodelabel.h</header>
+   <slots>
+    <signal>clicked()</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>comboBox</tabstop>
+  <tabstop>lineEdit_login_passwd</tabstop>
+  <tabstop>lineEdit_VeriCode</tabstop>
+  <tabstop>btn_login_OK</tabstop>
+  <tabstop>lineEdit_reg_username</tabstop>
+  <tabstop>lineEdit_reg_pwd_Again</tabstop>
+  <tabstop>tabWidget_reg</tabstop>
+  <tabstop>btn_reg_OK</tabstop>
+  <tabstop>frame</tabstop>
+  <tabstop>checkBox</tabstop>
+  <tabstop>lineEdit_reg_passwd</tabstop>
+  <tabstop>pCloseButton</tabstop>
+  <tabstop>btn_choose</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

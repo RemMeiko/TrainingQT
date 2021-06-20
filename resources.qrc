@@ -1,19 +1,49 @@
 <RCC>
     <qresource prefix="/">
-        <file>resources/1.png</file>
         <file>resources/2.png</file>
-        <file>resources/gun.png</file>
-        <file>qss/tab_button.qss</file>
-        <file>resources/down.png</file>
-        <file>resources/mikasa.jpg</file>
-        <file>resources/avator.webp</file>
-        <file>resources/avator.JPG</file>
-        <file>resources/3.jpg</file>
-        <file>resources/4.png</file>
+        <file>resources/1.png</file>
         <file>resources/5.png</file>
         <file>resources/5_1.png</file>
-        <file>resources/5_2.png</file>
+        <file>resources/avator.JPG</file>
+        <file>resources/down.png</file>
+        <file>resources/gun.png</file>
+        <file>resources/ico.png</file>
+        <file>resources/loading.gif</file>
+        <file>resources/mikasa.jpg</file>
+        <file>resources/background/5.png</file>
+        <file>resources/image/1.png</file>
+        <file>resources/image/2.png</file>
+        <file>resources/image/3.png</file>
+        <file>resources/image/4.png</file>
+        <file>resources/imageswitch/btncheckoff1.png</file>
+        <file>resources/imageswitch/btncheckoff2.png</file>
+        <file>resources/imageswitch/btncheckoff3.png</file>
+        <file>resources/imageswitch/btncheckon1.png</file>
+        <file>resources/imageswitch/btncheckon2.png</file>
+        <file>resources/imageswitch/btncheckon3.png</file>
+        <file>resources/background/2.png</file>
+        <file>resources/background/ico_smoke.png</file>
+        <file>resources/background/ico_hum.png</file>
+        <file>resources/background/ico_tem.png</file>
+        <file>resources/background/1.png</file>
+        <file>resources/background/3.jpg</file>
+        <file>resources/background/ico_down.png</file>
+        <file>resources/background/ico_up.png</file>
+        <file>resources/background/2_window.png</file>
+        <file>resources/background/2_window_down.png</file>
+        <file>resources/background/2_window_up.png</file>
+        <file>resources/background/furn2Background.png</file>
+        <file>resources/background/furn2Background2.png</file>
+        <file>resources/background/3_furn2Background.png</file>
+        <file>resources/background/ico_return.png</file>
+        <file>resources/background/table_back.jpg</file>
+        <file>resources/background/4.jpg</file>
+        <file>resources/background/ico_going.png</file>
+        <file>resources/avator.webp</file>
+        <file>resources/3.jpg</file>
+        <file>resources/4.png</file>
+        <file>resources/bg.png</file>
+        <file>resources/bg2.png</file>
+        <file>resources/copyright.gif</file>
     </qresource>
-    <qresource prefix="/qss" lang="css"/>
-    <qresource prefix="/qss"/>
 </RCC>
