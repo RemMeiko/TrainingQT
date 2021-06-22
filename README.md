@@ -7,4 +7,13 @@
   + 但是该有的还是有，并且UI设计简洁但不简陋
   + 但是还是有很多不足的地方，会在下面进行说明！
 
+---
+运行环境: WINDOWS 10   
+QT版本: 5.9.1 COMMUNITY  
+加入控件
++ ImageSwitch控件
++ QCustomPlot控件(QChart也可以，但是基于当时情况，QT只能重装，所以用了QCustomPlot)
+
+---
+
 
