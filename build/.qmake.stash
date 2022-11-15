@@ -1,0 +1,24 @@
+QMAKE_CXX.INCDIRS = \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/arm-linux-gnueabi/include/c++/5.5.0 \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/arm-linux-gnueabi/include/c++/5.5.0/arm-linux-gnueabi \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/arm-linux-gnueabi/include/c++/5.5.0/backward \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/lib/gcc/arm-linux-gnueabi/5.5.0/include \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/lib/gcc/arm-linux-gnueabi/5.5.0/include-fixed \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/arm-linux-gnueabi/include \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/arm-linux-gnueabi/libc/usr/include
+QMAKE_CXX.LIBDIRS = \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/lib/gcc/arm-linux-gnueabi/5.5.0 \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/lib/gcc/arm-linux-gnueabi \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/lib/gcc \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/arm-linux-gnueabi/lib \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/arm-linux-gnueabi/libc/lib \
+    /home/tanxy/gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabi/arm-linux-gnueabi/libc/usr/lib
+QMAKE_CXX.QT_COMPILER_STDCXX = 199711L
+QMAKE_CXX.QMAKE_GCC_MAJOR_VERSION = 5
+QMAKE_CXX.QMAKE_GCC_MINOR_VERSION = 5
+QMAKE_CXX.QMAKE_GCC_PATCH_VERSION = 0
+QMAKE_CXX.COMPILER_MACROS = \
+    QT_COMPILER_STDCXX \
+    QMAKE_GCC_MAJOR_VERSION \
+    QMAKE_GCC_MINOR_VERSION \
+    QMAKE_GCC_PATCH_VERSION
